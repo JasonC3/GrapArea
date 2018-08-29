@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-9">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Program Files/Java/jdk-9.0.4/lib/missioncontrol/plugins/javax.servlet_3.1.0.v201410161800.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-core-4.4.9/lib/commons-cli-1.2.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-core-4.4.9/lib/httpcore-4.4.9.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-core-4.4.9/lib/httpcore-ab-4.4.9.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-core-4.4.9/lib/httpcore-nio-4.4.9.jar"/>
+	<classpathentry kind="lib" path="D:/Java/commons-net-3.6/commons-net-3.6.jar"/>
+	<classpathentry kind="lib" path="D:/Java/commons-net-3.6/commons-net-3.6-sources.jar"/>
+	<classpathentry kind="lib" path="D:/Java/commons-net-3.6/commons-net-examples-3.6.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-client-4.5.5/lib/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-client-4.5.5/lib/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-client-4.5.5/lib/fluent-hc-4.5.5.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-client-4.5.5/lib/httpclient-4.5.5.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-client-4.5.5/lib/httpclient-cache-4.5.5.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-client-4.5.5/lib/httpclient-win-4.5.5.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-client-4.5.5/lib/httpcore-4.4.9.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-client-4.5.5/lib/httpmime-4.5.5.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-client-4.5.5/lib/jna-4.4.0.jar"/>
+	<classpathentry kind="lib" path="D:/Java/httpcomponents-client-4.5.5/lib/jna-platform-4.4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

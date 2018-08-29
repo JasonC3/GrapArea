@@ -1,133 +1,100 @@
 package Grap;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import config.Common;
 
-@SuppressWarnings("serial")
-public class GetAddress extends HttpServlet {
-	/**
-	 * 递归便利获取地区的信息
-	 * 
-	 * @author yuyu
-	 */
-	public String basicUrl = "http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2017/";
+public class GetAddress {
 
-	public String json = null;
-
-	public String status = "";
-
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+	private String basicUrl;
+	
+	public GetAddress(String year) {
+		basicUrl = "http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/" + year + "/";
+	}
+	
+	public void doGet() throws IOException {
+		HttpRequest request=HttpRequest.getInstance();
+		request.setCharset("gb2312");
+		File f;//=new File("D:/CityInfo/provincetr_11.txt");
+		OutputStream ots;//=new FileOutputStream(f);
+		OutputStreamWriter wr;//=new OutputStreamWriter(ots,"gb2312");
 		try {
+			String data=request.doGet(basicUrl);
 
-			response.setHeader("Content-Type", "application/xml; charset=UTF-8");// 编码
-			response.setHeader("Access-Control-Allow-Origin", "*");// 跨域问题
-
-			String url = basicUrl+"index.html";
-
-			String data = Common.sendGet(url);
-
-			json = "";
-
-			Pattern pattern = Pattern.compile("\\d+\\.html'>(\\D+)</a>");
+			// Load ID & Url
+			Pattern pattern = Pattern.compile("(\\d+)\\.html'>(\\D+)</a>");
 			Matcher matcher = pattern.matcher(data);
-
-			// 对应的省市地区的id
-			int Id = Integer.parseInt(request.getParameter("id")) - 1;
-
-			if (Id > 30 || Id < 0) {
-
-				throw new Exception("id错误，应取1-31");
-
-			}
-			// 便利省市地区
-			int i = 0;
+			
+			for(int i=0;i<3;i++)matcher.find();// Temp
+			
 			while (matcher.find()) {
+				String info = matcher.group();
+				String aUrl = basicUrl + info.replaceAll(".>.*", "");
+				String aData = info.replaceAll("\\w|\\.|<|>|/|'", "");
 
-				if (i == Id) {
+				System.out.println(aData);
+				System.out.println(aUrl);
 
-					String info = matcher.group();
-					String aUrl = basicUrl + info.replaceAll(".>.*", "");
-					String aData = info.replaceAll("\\w|\\.|<|>|/|'", "");
-
-					System.out.println(aUrl);
-					System.out.println(aData);
-
-					json += "{\"" + aData + "\":[" + getInfo(aUrl) + "]}";
-
-				}
-
-				i++;
-
+				StringBuilder json=new StringBuilder("{\"");
+				json.append(aData);
+				json.append("\":[");
+				json.append(getInfo(aUrl));
+				json.append("]}");
+				
+				// Save to file
+				f=new File("D:/CityInfo/provincetr_" + matcher.group(1) + ".txt");
+				ots=new FileOutputStream(f);
+				wr=new OutputStreamWriter(ots,"gb2312");
+				wr.append(json);
+				wr.close();
+				ots.close();
+				break;
 			}
-			// 将跑完的数据保存到txt文件
-
-			Common.contentToTxt("C:/Users/yuyu/Desktop/" + Id + ".txt", json.replaceAll(",]", "]"));
-			response.setContentType("text/html");
-			request.setCharacterEncoding("UTF-8");// 乱码问题
-			PrintWriter out = response.getWriter();
-			out.println("已写入C:/Users/yuyu/Desktop/" + Id + ".txt");
-			out.flush();
-			out.close();
 
 		} catch (Exception e) {
-			// 发生错误的时候输出错误
 			e.printStackTrace();
-			response.setContentType("text/html");
-			request.setCharacterEncoding("UTF-8");// 乱码问题
-			PrintWriter out = response.getWriter();
-			out.println("错误：" + e.getMessage());
-			out.flush();
-			out.close();
-
 		}
 	}
 
 	/**
-	 * 根据url获取对应的页面信息
+	 * grap info by Url
 	 * 
 	 * @param url
 	 * @return
 	 * @throws Exception
 	 */
 	public String getInfo(String url) throws Exception {
-		String json = "";
-		String data = Common.sendGet(url);
+		StringBuilder json = new StringBuilder("");
+		HttpRequest request=HttpRequest.getInstance();
+		String data = request.doGet(url);
 
 		// 请求出错的我时候
 		int y = 0;
 		while ("".equals(data) || null == data) {
-
 			if (y == 10) {
 				break;
 			}
-			data = Common.sendGet(url);
+			data = request.doGet(url);
 			y++;
-
 		}
 
 		if ("".equals(data) || null == data) {
-
 			throw new Exception("未请求到数据");
-
 		}
 		// 取得对应区域的数据
 		Pattern pattern = Pattern.compile("<tr class='[a-z]*'>.+?</tr>");
 		Matcher matcher = pattern.matcher(data);
-		int x = 0;
+		//int x = 0;
 		while (matcher.find()) {
 
-			if (x == 0) {
-				x++;
-				continue;
-			}
+			//if (x == 0) {
+			//	x++;
+			//	continue;
+			//}
 			String info = matcher.group();
 			// 获得正确的url
 			String status = url.replaceAll("\\d+\\.html", "");
@@ -140,16 +107,22 @@ public class GetAddress extends HttpServlet {
 			String aData = getDataByRegex(info, "[\u4e00-\u9fa5]+");
 			// 打印匹配信息
 			// System.out.println(aUrl);
-			// System.out.println(aId);
-			// System.out.println(aData);
+			System.out.println(aId);
+			System.out.println(aData);
 			// 添加匹配带的信息
-			if ("".equals(shh)) {
-				json += "{\"id\":\"" + aId + "\",\"name\":\"" + aData + "\"},";
-			} else {
-				json += "{\"id\":\"" + aId + "\",\"name\":\"" + aData + "\",\"children\":[" + getInfo(aUrl) + "]},";
+			json.append("{\"id\":\"");
+			json.append(aId);
+			json.append("\",\"name\":\"");
+			json.append(aData);
+			json.append("\"");
+			if (!"".equals(shh)) {
+				json.append(",\"children\":[");
+				json.append(getInfo(aUrl));
+				json.append("]");
 			}
+			json.append("},");
 		}
-		return json;
+		return json.toString();
 	}
 
 	/**
